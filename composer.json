@@ -1,11 +1,13 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "guilherme-luiz-cella/last-movies",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Track and organize movies and TV series you want to watch",
     "keywords": [
         "laravel",
-        "framework"
+        "framework",
+        "movies",
+        "watchlist"
     ],
     "license": "MIT",
     "require": {
