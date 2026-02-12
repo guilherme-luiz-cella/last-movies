@@ -1,4 +1,3 @@
-#!/bin/bash
 
 echo "🚀 Starting Vercel Build..."
 
@@ -13,11 +12,5 @@ npm ci
 # Build frontend assets
 echo "🎨 Building frontend assets..."
 npm run build
-
-# Optimize Laravel
-echo "⚡ Optimizing Laravel..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
 
 echo "✅ Build completed successfully!"
