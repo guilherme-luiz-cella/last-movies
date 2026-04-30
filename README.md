@@ -1,68 +1,74 @@
-# Movie Watchlist (Laravel)
+# Last Movies
 
-Simple movie tracker built with Laravel.
+Movie and series watchlist running on Cloudflare Workers with Cloudflare D1.
 
-## Features
+## Runtime
 
-- Add movies manually or fetch metadata from OMDb
-- Status tracking: `pending` / `watched`
-- Dashboard stats: total, pending, watched, progress
-- Live title suggestions on add form
+- Cloudflare Workers for HTTP, HTML rendering, and movie metadata integration
+- Cloudflare D1 for persistence
+- Vite + Tailwind for static assets served through the Worker assets binding
+- Vitest for domain, application, and infrastructure tests
 
-## Tech
+## Structure
 
-- Laravel 12
-- SQLite (default)
-- Blade + Tailwind + Vite
-- OMDb API
+- `src/domain`: movie types, statuses, validation, and status transition rules
+- `src/application`: use cases for list, create, search, status toggle, and delete
+- `src/infrastructure`: D1 repository and OMDb/TMDB metadata client implementations
+- `src/interface`: Worker HTTP router and HTML response rendering
+- `migrations`: D1 database schema
+- `test`: success and failure tests for the Worker app logic
 
-## Quick start
+## Local setup
 
-1. Install dependencies:
-   - `composer install`
-   - `npm install`
+```bash
+npm install
+npm run build
+npm run db:migrate:local
+npm run dev
+```
 
-2. Create env:
-   - `cp .env.example .env`
-   - `php artisan key:generate`
+Set `TMDB_BEARER_TOKEN` as a Wrangler secret when you want TMDB search/details:
 
-3. Create SQLite file:
-   - `mkdir -p database`
-   - `touch database/database.sqlite`
+```bash
+npx wrangler secret put TMDB_BEARER_TOKEN
+```
 
-4. Set env values in `.env`:
-   - `DB_CONNECTION=sqlite`
-   - `DB_DATABASE=database/database.sqlite`
-   - `SESSION_DRIVER=file`
-   - `QUEUE_CONNECTION=sync`
-   - `CACHE_STORE=file`
-   - `OMDB_API_KEY=your_key_here`
+`OMDB_API_KEY` is still supported as a fallback when `TMDB_BEARER_TOKEN` is not present:
 
-5. Run migrations:
-   - `php artisan migrate`
+```bash
+npx wrangler secret put OMDB_API_KEY
+```
 
-6. Start app:
-   - `composer run dev`
+For local development, `.env` can contain either the raw key or the full OMDb sample URL; the Worker extracts the `apikey` value when a URL is pasted.
 
-App URL: `http://127.0.0.1:8000`
+## Cloudflare D1 setup
 
-## Main files
+Create the database and copy the returned database id into `wrangler.jsonc`:
 
-- Routes: `routes/web.php`
-- Controller: `app/Http/Controllers/MovieController.php`
-- Model: `app/Models/Movie.php`
-- Migration: `database/migrations/2026_02_12_000003_create_movies_table.php`
-- Views:
-  - `resources/views/movies/index.blade.php`
-  - `resources/views/movies/create.blade.php`
+```bash
+npx wrangler d1 create last-movies
+```
 
-## Deployment note
+Then apply migrations:
 
-This is a Laravel server app.  
-**GitHub Pages cannot run PHP** (only static files).  
-Use Render, Railway, Fly.io, or a VPS for deployment.
+```bash
+npm run db:migrate:remote
+```
 
-## Security note
+## Deploy
 
-Do not commit `.env`.  
-If an API key was exposed, rotate it in OMDb and set a new value in `.env`.
+```bash
+npm run deploy
+```
+
+Production route:
+
+```text
+https://movies.cella.website
+```
+
+## Tests
+
+```bash
+npm test
+```

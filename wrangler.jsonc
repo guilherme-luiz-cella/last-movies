@@ -1,0 +1,25 @@
+{
+    "$schema": "./node_modules/wrangler/config-schema.json",
+    "name": "last-movies",
+    "main": "src/worker.js",
+    "compatibility_date": "2026-04-30",
+    "assets": {
+        "directory": "./public",
+        "binding": "ASSETS",
+        "run_worker_first": true
+    },
+    "routes": [
+        {
+            "pattern": "movies.cella.website/*",
+            "zone_name": "cella.website"
+        }
+    ],
+    "d1_databases": [
+        {
+            "binding": "DB",
+            "database_name": "last-movies",
+            "database_id": "adc077ec-f3b9-459a-802f-a59f60d7061f",
+            "migrations_dir": "migrations"
+        }
+    ]
+}

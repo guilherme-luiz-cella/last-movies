@@ -122,6 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     data-year="${escapeHtml(item.year || "")}"
                     data-poster="${escapeHtml(item.poster || "")}"
                     data-tmdb-id="${escapeHtml(String(item.tmdb_id || ""))}"
+                    data-imdb-id="${escapeHtml(String(item.imdb_id || ""))}"
                     data-overview="${escapeHtml(item.overview || "")}"
                     class="suggestion-item flex w-full items-center gap-4 border-b border-gray-800 px-4 py-3 text-left transition hover:bg-zinc-900 last:border-b-0"
                 >
@@ -146,6 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const year = button.dataset.year || "";
                     const poster = button.dataset.poster || "";
                     const tmdbId = button.dataset.tmdbId || "";
+                    const imdbId = button.dataset.imdbId || "";
                     const overview = button.dataset.overview || "";
 
                     console.log("Suggestion selected:", {
@@ -153,6 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         year,
                         poster,
                         tmdbId,
+                        imdbId,
                     });
 
                     // Fill form fields
@@ -180,6 +183,19 @@ document.addEventListener("DOMContentLoaded", function () {
                             .appendChild(tmdbIdInput);
                     }
                     tmdbIdInput.value = tmdbId;
+
+                    // Add hidden field for IMDb ID
+                    let imdbIdInput = document.getElementById("imdb_id");
+                    if (!imdbIdInput) {
+                        imdbIdInput = document.createElement("input");
+                        imdbIdInput.type = "hidden";
+                        imdbIdInput.id = "imdb_id";
+                        imdbIdInput.name = "imdb_id";
+                        document
+                            .getElementById("movieForm")
+                            .appendChild(imdbIdInput);
+                    }
+                    imdbIdInput.value = imdbId;
 
                     // Add hidden field for overview
                     let overviewInput = document.getElementById("overview");

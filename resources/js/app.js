@@ -1,3 +1,3 @@
-import './bootstrap';
+import '../css/app.css';
 import './movies';
 import './create-movie';
