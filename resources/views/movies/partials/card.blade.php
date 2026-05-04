@@ -1,4 +1,4 @@
-<div class="movie-card group relative overflow-hidden rounded-lg transition-all duration-300">
+<div class="movie-card group relative overflow-hidden rounded-md transition-all duration-300">
     <a href="{{ route('movies.show', $movie) }}" class="block">
         <!-- Poster Image -->
         <div class="poster-container relative aspect-[2/3] overflow-hidden bg-zinc-900">
@@ -26,14 +26,14 @@
                         @endif
                         @if($movie->type === 'series')
                             <span class="text-gray-500">•</span>
-                            <span class="rounded bg-purple-600/30 px-2 py-0.5 text-purple-300">Série</span>
+                            <span class="rounded bg-red-600/30 px-2 py-0.5 text-red-200">Série</span>
                             @if($movie->seasons)
                                 <span class="text-gray-500">•</span>
                                 <span>{{ $movie->seasons }} {{ $movie->seasons == 1 ? 'Temporada' : 'Temporadas' }}</span>
                             @endif
                         @else
                             <span class="text-gray-500">•</span>
-                            <span class="rounded bg-blue-600/30 px-2 py-0.5 text-blue-300">Filme</span>
+                            <span class="rounded bg-red-600/30 px-2 py-0.5 text-red-200">Filme</span>
                         @endif
                     </div>
 
@@ -44,14 +44,14 @@
                             @method('PATCH')
                             <button
                                 class="btn-toggle flex w-full items-center justify-center gap-1 rounded px-3 py-2 text-xs font-semibold transition
-                                    @if($movie->status === 'pending') bg-amber-500 text-white hover:bg-amber-600
-                                    @elseif($movie->status === 'watching') bg-blue-500 text-white hover:bg-blue-600
+                                    @if($movie->status === 'pending') bg-white text-black hover:bg-gray-200
+                                    @elseif($movie->status === 'watching') bg-zinc-700 text-white hover:bg-zinc-600
                                     @else bg-white text-black hover:bg-gray-200
                                     @endif">
                                 @if($movie->status === 'pending')
-                                    <span>📋</span> <span class="hidden sm:inline">Para Assistir</span>
+                                    <span class="hidden sm:inline">Para Assistir</span>
                                 @elseif($movie->status === 'watching')
-                                    <span>▶️</span> <span class="hidden sm:inline">Assistindo</span>
+                                    <span>▶</span> <span class="hidden sm:inline">Assistindo</span>
                                 @else
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -81,12 +81,12 @@
             <!-- Type Badge -->
             <div class="absolute left-2 top-2">
                 @if($movie->type === 'series')
-                    <span class="rounded-full bg-purple-600 px-2 py-1 text-xs font-semibold shadow-lg">
-                        📺
+                    <span class="rounded-full bg-red-600 px-2 py-1 text-[10px] font-bold uppercase tracking-wide shadow-lg">
+                        Série
                     </span>
                 @else
-                    <span class="rounded-full bg-blue-600 px-2 py-1 text-xs font-semibold shadow-lg">
-                        🎬
+                    <span class="rounded-full bg-red-600 px-2 py-1 text-[10px] font-bold uppercase tracking-wide shadow-lg">
+                        Filme
                     </span>
                 @endif
             </div>

@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
@@ -17,7 +18,7 @@ return new class extends Migration {
             $table->string('imdb_id')->nullable()->index();
             $table->string('poster_url')->nullable();
             $table->text('overview')->nullable();
-            $table->enum('status', ['pending', 'watched'])->default('pending')->index();
+            $table->enum('status', ['pending', 'watching', 'watched'])->default('pending')->index();
             $table->timestamp('watched_at')->nullable();
             $table->timestamps();
         });

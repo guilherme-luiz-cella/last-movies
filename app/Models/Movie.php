@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Components\Enum\MovieTypeEnum;
+use App\Components\Enum\StatusTypeEnum;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,65 +32,58 @@ class Movie extends Model
         'episodes' => 'integer',
     ];
 
-    // Scopes
-    public function scopeMovies($query)
+    public function scopeMovies(Builder $query): Builder
     {
-        return $query->where('type', 'movie');
+        return $query->where('type', MovieTypeEnum::MOVIE);
     }
 
-    public function scopeSeries($query)
+    public function scopeSeries(Builder $query): Builder
     {
-        return $query->where('type', 'series');
+        return $query->where('type', MovieTypeEnum::SERIES);
     }
 
-    public function scopePending($query)
+    public function scopeOfType(Builder $query, ?string $type): Builder
     {
-        return $query->where('status', 'pending');
+        return $type ? $query->where('type', $type) : $query;
     }
 
-    public function scopeWatching($query)
+    public function scopeStatus(Builder $query, ?string $status): Builder
     {
-        return $query->where('status', 'watching');
+        return $status ? $query->where('status', $status) : $query;
     }
 
-    public function scopeWatched($query)
+    public function scopePending(Builder $query): Builder
     {
-        return $query->where('status', 'watched');
+        return $query->status(StatusTypeEnum::PENDING);
     }
 
-    // Helper methods
+    public function scopeWatching(Builder $query): Builder
+    {
+        return $query->status(StatusTypeEnum::WATCHING);
+    }
+
+    public function scopeWatched(Builder $query): Builder
+    {
+        return $query->status(StatusTypeEnum::WATCHED);
+    }
+
     public function isMovie(): bool
     {
-        return $this->type === 'movie';
+        return MovieTypeEnum::isMovie($this->type);
     }
 
     public function isSeries(): bool
     {
-        return $this->type === 'series';
+        return $this->type === MovieTypeEnum::SERIES;
     }
 
     public function getTypeLabel(): string
     {
-        return $this->type === 'movie' ? 'Filme' : 'Série';
+        return MovieTypeEnum::label($this->type);
     }
 
     public function getStatusLabel(): string
     {
-        return match($this->status) {
-            'pending' => 'Para Assistir',
-            'watching' => 'Assistindo',
-            'watched' => 'Assistido',
-            default => 'Desconhecido'
-        };
-    }
-
-    public function getStatusIcon(): string
-    {
-        return match($this->status) {
-            'pending' => '📋',
-            'watching' => '▶️',
-            'watched' => '✓',
-            default => '❓'
-        };
+        return StatusTypeEnum::label($this->status);
     }
 }

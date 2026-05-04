@@ -63,7 +63,7 @@
                             @elseif($movie->status === 'watching') bg-blue-500/90
                             @else bg-emerald-500/90
                             @endif">
-                            {{ $movie->getStatusIcon() }} {{ $movie->getStatusLabel() }}
+                            {{ $movie->getStatusLabel() }}
                         </span>
                     </div>
 

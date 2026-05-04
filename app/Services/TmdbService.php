@@ -8,12 +8,14 @@ use Illuminate\Support\Facades\Log;
 class TmdbService
 {
     private ?string $bearerToken;
+
     private string $baseUrl;
+
     private string $imageBaseUrl;
 
     public function __construct()
     {
-        $this->bearerToken = config('services.tmdb.bearer_token');
+        $this->bearerToken = trim((string) config('services.tmdb.bearer_token'));
         $this->baseUrl = config('services.tmdb.base_url', 'https://api.themoviedb.org/3');
         $this->imageBaseUrl = config('services.tmdb.image_base_url', 'https://image.tmdb.org/t/p');
     }
@@ -25,6 +27,7 @@ class TmdbService
     {
         if (empty($this->bearerToken)) {
             Log::warning('TMDB Bearer Token not configured');
+
             return [];
         }
 
@@ -39,20 +42,21 @@ class TmdbService
                     'page' => 1,
                 ]);
 
-            if (!$response->ok()) {
-                Log::error('TMDB Search failed with status: ' . $response->status());
+            if (! $response->ok()) {
+                Log::error('TMDB Search failed with status: '.$response->status());
+
                 return [];
             }
 
             $payload = $response->json();
-            
+
             return collect($payload['results'] ?? [])
                 ->take(6)
                 ->map(function (array $item) use ($type) {
-                    $title = $type === 'series' 
+                    $title = $type === 'series'
                         ? ($item['name'] ?? $item['original_name'] ?? null)
                         : ($item['title'] ?? $item['original_title'] ?? null);
-                    
+
                     $year = null;
                     if ($type === 'series') {
                         $year = isset($item['first_air_date']) ? substr($item['first_air_date'], 0, 4) : null;
@@ -72,11 +76,12 @@ class TmdbService
                         'overview' => $item['overview'] ?? null,
                     ];
                 })
-                ->filter(fn(array $item) => !empty($item['title']))
+                ->filter(fn (array $item) => ! empty($item['title']))
                 ->values()
                 ->all();
         } catch (\Throwable $e) {
-            Log::error('TMDB Search Error: ' . $e->getMessage());
+            Log::error('TMDB Search Error: '.$e->getMessage());
+
             return [];
         }
     }
@@ -88,6 +93,7 @@ class TmdbService
     {
         if (empty($this->bearerToken)) {
             Log::warning('TMDB Bearer Token not configured');
+
             return null;
         }
 
@@ -100,17 +106,18 @@ class TmdbService
                     'language' => $language,
                 ]);
 
-            if (!$response->ok()) {
-                Log::error('TMDB Details failed with status: ' . $response->status());
+            if (! $response->ok()) {
+                Log::error('TMDB Details failed with status: '.$response->status());
+
                 return null;
             }
 
             $data = $response->json();
-            
-            $title = $type === 'series' 
+
+            $title = $type === 'series'
                 ? ($data['name'] ?? $data['original_name'] ?? null)
                 : ($data['title'] ?? $data['original_title'] ?? null);
-            
+
             $year = null;
             if ($type === 'series') {
                 $year = isset($data['first_air_date']) ? substr($data['first_air_date'], 0, 4) : null;
@@ -137,7 +144,8 @@ class TmdbService
 
             return $result;
         } catch (\Throwable $e) {
-            Log::error('TMDB Details Error: ' . $e->getMessage());
+            Log::error('TMDB Details Error: '.$e->getMessage());
+
             return null;
         }
     }
