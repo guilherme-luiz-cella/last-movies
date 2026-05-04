@@ -43,7 +43,7 @@ describe("OmdbClient", () => {
 
         await client.search("guardians", "movie");
 
-        const calledUrl = fetcher.mock.calls[0][0];
+        const calledUrl = new URL(fetcher.mock.calls[0][0]);
         expect(calledUrl.searchParams.get("apikey")).toBe("abc123");
     });
 

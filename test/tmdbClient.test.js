@@ -41,6 +41,22 @@ describe("TmdbClient", () => {
         });
         expect(await clientWithFailure.search("matrix")).toEqual([]);
     });
+
+    it("trims whitespace from bearer tokens", async () => {
+        const fetcher = vi.fn().mockResolvedValue(jsonResponse({ results: [] }));
+        const client = new TmdbClient({ bearerToken: " token ", fetcher });
+
+        await client.search("matrix");
+
+        expect(fetcher).toHaveBeenCalledWith(
+            "https://api.themoviedb.org/3/search/movie?query=matrix&language=pt-BR&page=1",
+            expect.objectContaining({
+                headers: expect.objectContaining({
+                    Authorization: "Bearer token",
+                }),
+            }),
+        );
+    });
 });
 
 function jsonResponse(payload) {

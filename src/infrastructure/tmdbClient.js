@@ -1,6 +1,6 @@
 export class TmdbClient {
     constructor({ bearerToken, fetcher = fetch, baseUrl, imageBaseUrl } = {}) {
-        this.bearerToken = bearerToken ?? "";
+        this.bearerToken = String(bearerToken ?? "").trim();
         this.fetcher = fetcher;
         this.baseUrl = baseUrl ?? "https://api.themoviedb.org/3";
         this.imageBaseUrl = imageBaseUrl ?? "https://image.tmdb.org/t/p";
@@ -18,8 +18,9 @@ export class TmdbClient {
         url.searchParams.set("page", "1");
 
         try {
-            const response = await this.fetcher(url, this.requestOptions());
+            const response = await this.fetcher(url.toString(), this.requestOptions());
             if (!response.ok) {
+                console.warn("TMDB search failed.", { status: response.status });
                 return [];
             }
 
@@ -28,7 +29,8 @@ export class TmdbClient {
                 .slice(0, 6)
                 .map((item) => this.mapSearchResult(item, type))
                 .filter((item) => item.title);
-        } catch {
+        } catch (error) {
+            console.warn("TMDB search request failed.", { message: error?.message });
             return [];
         }
     }
@@ -48,13 +50,15 @@ export class TmdbClient {
         url.searchParams.set("language", language);
 
         try {
-            const response = await this.fetcher(url, this.requestOptions());
+            const response = await this.fetcher(url.toString(), this.requestOptions());
             if (!response.ok) {
+                console.warn("TMDB details failed.", { status: response.status });
                 return null;
             }
 
             return this.mapDetails(await response.json(), type);
-        } catch {
+        } catch (error) {
+            console.warn("TMDB details request failed.", { message: error?.message });
             return null;
         }
     }

@@ -2,9 +2,11 @@ import { OmdbClient } from "./omdbClient.js";
 import { TmdbClient } from "./tmdbClient.js";
 
 export function makeMovieMetadataClient(env, fetcher = fetch) {
-    if (env.TMDB_BEARER_TOKEN) {
+    const tmdbBearerToken = String(env.TMDB_BEARER_TOKEN ?? "").trim();
+
+    if (tmdbBearerToken) {
         return new TmdbClient({
-            bearerToken: env.TMDB_BEARER_TOKEN,
+            bearerToken: tmdbBearerToken,
             fetcher,
         });
     }
@@ -15,6 +17,8 @@ export function makeMovieMetadataClient(env, fetcher = fetch) {
             fetcher,
         });
     }
+
+    console.warn("Movie metadata provider is not configured.");
 
     return new OmdbClient({ fetcher });
 }

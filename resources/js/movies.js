@@ -23,17 +23,9 @@ function initHeader() {
         const currentScroll = window.pageYOffset;
 
         if (currentScroll > 50) {
-            header.classList.add(
-                "bg-[#141414]/95",
-                "backdrop-blur-sm",
-                "shadow-lg",
-            );
+            header.classList.add("header-scrolled");
         } else {
-            header.classList.remove(
-                "bg-[#141414]/95",
-                "backdrop-blur-sm",
-                "shadow-lg",
-            );
+            header.classList.remove("header-scrolled");
         }
 
         lastScroll = currentScroll;

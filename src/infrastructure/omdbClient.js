@@ -16,7 +16,7 @@ export class OmdbClient {
         url.searchParams.set("type", type === "series" ? "series" : "movie");
 
         try {
-            const response = await this.fetcher(url);
+            const response = await this.fetcher(url.toString());
             if (!response.ok) {
                 return [];
             }
@@ -51,7 +51,7 @@ export class OmdbClient {
         url.searchParams.set("plot", "full");
 
         try {
-            const response = await this.fetcher(url);
+            const response = await this.fetcher(url.toString());
             if (!response.ok) {
                 return null;
             }

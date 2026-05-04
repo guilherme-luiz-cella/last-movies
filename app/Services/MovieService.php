@@ -38,6 +38,7 @@ class MovieService
             'movies' => $movies,
             'sections' => $this->sections($movies, $normalizedTypeFilter, $stats),
             'stats' => $stats,
+            'statusFilter' => $status,
             'typeFilter' => $normalizedTypeFilter,
         ];
     }

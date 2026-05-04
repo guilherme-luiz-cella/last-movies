@@ -17,36 +17,25 @@ document.addEventListener("DOMContentLoaded", function () {
     let currentType = "movie";
     let currentLanguage = "pt-BR";
 
-    // Check if elements exist (only run on create page)
     if (!titleInput || !suggestionsEl) {
-        console.log("Create movie page elements not found");
         return;
     }
 
-    console.log("Create movie page initialized");
-
-    // Handle language selection
     if (languageSelect) {
         languageSelect.addEventListener("change", (e) => {
             currentLanguage = e.target.value;
-            console.log("Language changed to:", currentLanguage);
-            // Clear suggestions when language changes
             hideSuggestions();
 
-            // If there's text, trigger new search
             if (titleInput.value.trim().length >= 2) {
                 titleInput.dispatchEvent(new Event("input"));
             }
         });
     }
 
-    // Handle type selection (Movie vs Series)
     typeRadios.forEach((radio) => {
         radio.addEventListener("change", (e) => {
             currentType = e.target.value;
-            console.log("Type changed to:", currentType);
 
-            // Update UI text
             if (titleType) {
                 titleType.textContent =
                     currentType === "movie" ? "do Filme" : "da Série";
@@ -75,21 +64,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
 
-            // Clear suggestions when type changes
             hideSuggestions();
         });
     });
 
-    // Hide suggestions dropdown
     const hideSuggestions = () => {
         suggestionsEl.innerHTML = "";
         suggestionsEl.classList.add("hidden");
     };
 
-    // Render suggestions in dropdown
     const renderSuggestions = (items) => {
-        console.log("Rendering suggestions:", items.length);
-
         if (searchLoader) {
             searchLoader.classList.add("hidden");
         }
@@ -99,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        const typeIcon = currentType === "series" ? "📺" : "🎬";
+        const typeLabel = currentType === "series" ? "Série" : "Filme";
 
         suggestionsEl.innerHTML = items
             .map((item) => {
@@ -128,7 +112,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 >
                     ${poster}
                     <div class="flex-1">
-                        <p class="font-medium text-white">${typeIcon} ${escapeHtml(item.title)}${year}</p>
+                        <p class="font-semibold text-white">${escapeHtml(item.title)}${year}</p>
+                        <p class="mt-0.5 text-[11px] font-bold uppercase text-red-300">${typeLabel}</p>
                         ${item.overview ? `<p class="mt-1 text-xs text-gray-400 line-clamp-2">${escapeHtml(item.overview)}</p>` : ""}
                     </div>
                 </button>
@@ -138,7 +123,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         suggestionsEl.classList.remove("hidden");
 
-        // Add click handlers to suggestions
         suggestionsEl
             .querySelectorAll("button[data-title]")
             .forEach((button) => {
@@ -150,15 +134,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     const imdbId = button.dataset.imdbId || "";
                     const overview = button.dataset.overview || "";
 
-                    console.log("Suggestion selected:", {
-                        title,
-                        year,
-                        poster,
-                        tmdbId,
-                        imdbId,
-                    });
-
-                    // Fill form fields
                     titleInput.value = title;
 
                     const yearInput = document.getElementById("year");
@@ -171,7 +146,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         posterInput.value = poster;
                     }
 
-                    // Add hidden field for TMDB ID
                     let tmdbIdInput = document.getElementById("tmdb_id");
                     if (!tmdbIdInput) {
                         tmdbIdInput = document.createElement("input");
@@ -184,7 +158,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     tmdbIdInput.value = tmdbId;
 
-                    // Add hidden field for IMDb ID
                     let imdbIdInput = document.getElementById("imdb_id");
                     if (!imdbIdInput) {
                         imdbIdInput = document.createElement("input");
@@ -197,7 +170,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     imdbIdInput.value = imdbId;
 
-                    // Add hidden field for overview
                     let overviewInput = document.getElementById("overview");
                     if (!overviewInput) {
                         overviewInput = document.createElement("input");
@@ -210,7 +182,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     overviewInput.value = overview;
 
-                    // Add hidden field for language
                     let languageInput =
                         document.getElementById("language_hidden");
                     if (!languageInput) {
@@ -230,12 +201,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     };
 
-    // Search as user types
     titleInput.addEventListener("input", () => {
         const query = titleInput.value.trim();
         clearTimeout(debounceTimer);
-
-        console.log("Input changed:", query);
 
         if (query.length < 2) {
             hideSuggestions();
@@ -252,7 +220,6 @@ document.addEventListener("DOMContentLoaded", function () {
         debounceTimer = setTimeout(async () => {
             try {
                 const url = `/movies/search?q=${encodeURIComponent(query)}&type=${currentType}&language=${currentLanguage}`;
-                console.log("Fetching:", url);
 
                 const response = await fetch(url);
 
@@ -265,7 +232,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 const items = await response.json();
-                console.log("Search results:", items);
                 renderSuggestions(Array.isArray(items) ? items : []);
             } catch (error) {
                 console.error("Search error:", error);

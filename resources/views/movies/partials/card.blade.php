@@ -1,6 +1,5 @@
 <div class="movie-card group relative overflow-hidden rounded-md transition-all duration-300">
     <a href="{{ route('movies.show', $movie) }}" class="block">
-        <!-- Poster Image -->
         <div class="poster-container relative aspect-[2/3] overflow-hidden bg-zinc-900">
             @if($movie->poster_url)
                 <img src="{{ $movie->poster_url }}" alt="{{ $movie->title }}"
@@ -15,29 +14,27 @@
                 </div>
             @endif
 
-            <!-- Overlay on Hover -->
             <div
-                class="card-overlay absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                class="card-overlay absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 <div class="absolute bottom-0 left-0 right-0 p-4">
-                    <h4 class="card-title mb-2 text-sm font-bold leading-tight text-white">{{ $movie->title }}</h4>
+                    <h4 class="card-title mb-2 text-sm font-black leading-tight text-white">{{ $movie->title }}</h4>
                     <div class="mb-3 flex items-center gap-2 text-xs text-gray-300">
                         @if($movie->year)
                             <span>{{ $movie->year }}</span>
                         @endif
                         @if($movie->type === 'series')
                             <span class="text-gray-500">•</span>
-                            <span class="rounded bg-red-600/30 px-2 py-0.5 text-red-200">Série</span>
+                            <span>Série</span>
                             @if($movie->seasons)
                                 <span class="text-gray-500">•</span>
                                 <span>{{ $movie->seasons }} {{ $movie->seasons == 1 ? 'Temporada' : 'Temporadas' }}</span>
                             @endif
                         @else
                             <span class="text-gray-500">•</span>
-                            <span class="rounded bg-red-600/30 px-2 py-0.5 text-red-200">Filme</span>
+                            <span>Filme</span>
                         @endif
                     </div>
 
-                    <!-- Action Buttons -->
                     <div class="flex gap-2">
                         <form action="{{ route('movies.toggle-status', $movie) }}" method="POST" class="flex-1">
                             @csrf
@@ -49,15 +46,15 @@
                                     @else bg-white text-black hover:bg-gray-200
                                     @endif">
                                 @if($movie->status === 'pending')
-                                    <span class="hidden sm:inline">Para Assistir</span>
+                                    <span>Assistir</span>
                                 @elseif($movie->status === 'watching')
-                                    <span>▶</span> <span class="hidden sm:inline">Assistindo</span>
+                                    <span>Assistindo</span>
                                 @else
                                     <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M5 13l4 4L19 7" />
                                     </svg>
-                                    <span class="hidden sm:inline">Assistido</span>
+                                    <span>Assistido</span>
                                 @endif
                             </button>
                         </form>
@@ -78,24 +75,21 @@
                 </div>
             </div>
 
-            <!-- Type Badge -->
             <div class="absolute left-2 top-2">
                 @if($movie->type === 'series')
-                    <span class="rounded-full bg-red-600 px-2 py-1 text-[10px] font-bold uppercase tracking-wide shadow-lg">
+                    <span class="media-badge">
                         Série
                     </span>
                 @else
-                    <span class="rounded-full bg-red-600 px-2 py-1 text-[10px] font-bold uppercase tracking-wide shadow-lg">
+                    <span class="media-badge">
                         Filme
                     </span>
                 @endif
             </div>
 
-            <!-- Status Badge -->
             @if($movie->status === 'watched')
-                <div
-                    class="status-badge absolute right-2 top-2 rounded-full bg-emerald-600 px-2 py-1 text-xs font-semibold">
-                    ✓
+                <div class="status-badge absolute right-2 top-2">
+                    Visto
                 </div>
             @endif
         </div>

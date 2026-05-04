@@ -23,7 +23,9 @@ export async function handleRequest(request, env) {
     const url = new URL(request.url);
     const method = request.method === "HEAD" ? "GET" : request.method;
     const repository = new D1MovieRepository(env.DB);
-    const tmdbClient = makeMovieMetadataClient(env, env.fetcher ?? fetch);
+    const runtimeFetch = env.fetcher ?? fetch;
+    const fetcher = (...args) => runtimeFetch(...args);
+    const metadataClient = () => makeMovieMetadataClient(env, fetcher);
 
     try {
         if (method === "GET" && isAsset(url) && env.ASSETS) {
@@ -46,6 +48,7 @@ export async function handleRequest(request, env) {
             return htmlResponse(
                 renderIndexPage({
                     ...result,
+                    statusFilter,
                     typeFilter,
                     statusMessage: url.searchParams.get("status"),
                 }),
@@ -57,13 +60,13 @@ export async function handleRequest(request, env) {
         }
 
         if (method === "GET" && url.pathname === "/movies/search") {
-            const results = await searchTmdb(tmdbClient, Object.fromEntries(url.searchParams));
+            const results = await searchTmdb(metadataClient(), Object.fromEntries(url.searchParams));
             return jsonResponse(results);
         }
 
         if (method === "POST" && url.pathname === "/movies") {
             const input = await readForm(request);
-            const result = await createMovie(repository, tmdbClient, input);
+            const result = await createMovie(repository, metadataClient(), input);
             const typeFilter = result.movie.type === "series" ? "series" : "movies";
 
             return redirect(`/?type=${typeFilter}`, result.message);

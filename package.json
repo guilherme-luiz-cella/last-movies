@@ -7,7 +7,7 @@
         "build": "vite build",
         "build:worker-assets": "npm run build && node scripts/generate-worker-assets.mjs",
         "dev": "npm run build && wrangler dev",
-        "deploy": "npm run build && wrangler deploy",
+        "deploy": "npm run build:worker-assets && wrangler deploy",
         "db:migrate:local": "wrangler d1 migrations apply last-movies --local",
         "db:migrate:remote": "wrangler d1 migrations apply last-movies --remote",
         "test": "vitest run"

@@ -10,7 +10,7 @@ describe("worker router", () => {
         const html = await response.text();
 
         expect(response.status).toBe(200);
-        expect(html).toContain("MEUS FILMES");
+        expect(html).toContain("Last Movies");
         expect(html).toContain("Heat");
     });
 
@@ -23,6 +23,46 @@ describe("worker router", () => {
         await expect(response.json()).resolves.toEqual({
             errors: ["Busca deve ter entre 2 e 255 caracteres."],
         });
+    });
+
+    it("wraps the runtime fetch before searching movie metadata", async () => {
+        const fetcher = async function () {
+            if (this !== undefined) {
+                throw new Error("fetch should be called without a bound this value");
+            }
+
+            return {
+                ok: true,
+                json: async () => ({
+                    results: [
+                        {
+                            id: 603,
+                            title: "Matrix",
+                            release_date: "1999-03-31",
+                            poster_path: "/matrix.jpg",
+                            overview: "A hacker discovers reality.",
+                        },
+                    ],
+                }),
+            };
+        };
+
+        const response = await handleRequest(new Request("https://movies.test/movies/search?q=matrix"), {
+            DB: fakeD1(),
+            TMDB_BEARER_TOKEN: "token",
+            fetcher,
+        });
+
+        await expect(response.json()).resolves.toEqual([
+            {
+                title: "Matrix",
+                year: "1999",
+                tmdb_id: 603,
+                type: "movie",
+                poster: "https://image.tmdb.org/t/p/w500/matrix.jpg",
+                overview: "A hacker discovers reality.",
+            },
+        ]);
     });
 });
 
